@@ -26,6 +26,9 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
                                             
                                             Modified last term enrolled to rank regular terms higher than con-ed.
 											
+   1.6        02-SEP-2025 Nigel Tourney     RFC 562809 - Update hard-coded decision code list to match the new
+											codes between CRM/Banner.
+											
 ******************************************************************************/
 
     stuPidm         number(8);
@@ -136,7 +139,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
         select * 
 		  from INTSERV.SPT_SYMP_SZVAPRD
 		 where szvaprd_term_code_entry > '202300'
-           and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+           --and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+		   and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
            and szvaprd_pidm = c_pidm
            --and szvaprd_pidm = pidm_Parameter  --**********for testing********* 
          order by 2,1,3;      
@@ -150,7 +154,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
           from SZVAPRD 
          where szvaprd_term_code_entry > '202300'
           --and szvaprd_pidm in pidm_Parameter  --**********for testing*********
-        and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+        --and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+		and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
         order by 1
         ;        
 --        select distinct szvaprd_pidm from SZVAPRD where szvaprd_term_code_entry > '202001' --'202000'
