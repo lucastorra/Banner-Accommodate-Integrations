@@ -15,6 +15,9 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
    1.2        04-JUL-2023 Nigel Tourney     RFC 561933 - Change course start/end dates to pull from SSBSECT.
                                             We need the start/end dates to be the same for each student in the
                                             course, otherwise it was causing problems in Accommodate.
+                                            
+   1.3        11-SEP-2025 Nigel Tourney     RFC 562817 - Modified to stop sending duplicate instructors for a course.
+                                            Bug fix to instructor email 17, it was always blank.
 											
 ******************************************************************************/
 
@@ -232,11 +235,16 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
     
     --Cursor to retrieve all secondary instructors.
     cursor getSecInstr_c(c_termCode varchar2, c_crn varchar2) is
-        
-        select sirasgn_pidm
-        from sirasgn where sirasgn_term_code = c_termCode
-        and sirasgn_crn = c_crn
-        and sirasgn_primary_ind is null;
+    
+        select distinct a.sirasgn_pidm
+        from sirasgn a where a.sirasgn_term_code = c_termCode
+        and a.sirasgn_crn = c_crn
+        --exclude the primary instructor from this list
+        and not exists (select 1 from sirasgn b 
+                where b.SIRASGN_TERM_CODE = a.SIRASGN_TERM_CODE 
+                and b.SIRASGN_CRN = a.SIRASGN_CRN 
+                and b.SIRASGN_PIDM = a.SIRASGN_PIDM
+                and b.sirasgn_primary_ind = 'Y');
         
     getSecInstr_rec    getSecInstr_c%rowtype;
     
@@ -662,7 +670,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
             and goremal_emal_code = 'IA'
             and goremal_status_ind = 'A';
             */
-            Select max(gobtpac_external_user) ||  '@saskpolytech.ca' into instrEmail7
+            Select max(gobtpac_external_user) ||  '@saskpolytech.ca' into instrEmail17
             from GOBTPAC where Gobtpac_pidm = instrPidm17;
 
         end if;
