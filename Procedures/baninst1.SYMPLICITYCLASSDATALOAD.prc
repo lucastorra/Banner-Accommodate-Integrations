@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
                                             
    1.3        11-SEP-2025 Nigel Tourney     RFC 562817 - Modified to stop sending duplicate instructors for a course.
                                             Bug fix to instructor email 17, it was always blank.
+                                            
+   1.4        01-OUT-2025 Lucas Torra       TICKET 2869479 - Adjust Regional College rule.   
 											
 ******************************************************************************/
 
@@ -164,12 +166,19 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
         on c.GTVDUNT_CODE = b.SSBSECT_DUNT_CODE
         
         where a.szvstcr_pidm = c_stuPidm
-        and a.szvstcr_term_code > '202300'
+          and a.szvstcr_term_code > '202300'
         -- Request from Ashley Boyes Ticket # 2011193 and 2013893 Nov 13 2024 GM 
         -- Removing Regional colleges (RC) and Labs (LAB) from Courses list
-        and (b.SSBSECT_INSM_CODE != 'RC'
-         AND b.SSBSECT_SCHD_CODE != 'LAB')
+          
+          --and (b.SSBSECT_INSM_CODE != 'RC' AND b.SSBSECT_SCHD_CODE != 'LAB')
+          and (b.SSBSECT_SCHD_CODE != 'LAB')        
+
         -- End change Nov 13 2024 GM
+        
+        --- ticket 2869479 Oct 01 2025 >>
+        --- Remove Regional Colleges
+          and not (b.SSBSECT_PTRM_CODE = 'SC' and b.SSBSECT_SEQ_NUMB like 'R%')        
+        -- <<
         ;
 --        and szvstcr_term_code > '202001' --'202000' --'202001'
 --        and szvstcr_term_code < '202003'; --'202100'; --'202003';
@@ -253,12 +262,13 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
     cursor getStudents_c is
         
         select szbsyms_pidm, szbsyms_studentID from szbsyms
-        where szbsyms_rectype = 'REG'
---        and szbsyms_pidm in (10011451,10460103)
+         where szbsyms_rectype = 'REG'
+           --and szbsyms_pidm in (10242819, 10524058) -- for testing 
         union
         select szbsyms_pidm, szbsyms_studentID from szbsyms
-        where szbsyms_rectype = 'APP$REG';
---        and szbsyms_pidm in (10011451,10460103);
+         where szbsyms_rectype = 'APP$REG';
+           --and szbsyms_pidm in (10242819, 10524058); -- for testing
+
     
     getStudents_rec     getStudents_c%rowtype;
     
@@ -1057,7 +1067,9 @@ BEGIN
     -- Adding code to set the ENROLLED flag to N for any students courses no  
         -- longer in the active enrolment list Jan 24, 2022 GM 
 
-        UPDATE SZBSYMC CT SET CT.SZBSYMC_ENROLLED = 'N', CT.SZBSYMC_ACTIVITYDATE = systimestamp 
+        UPDATE SZBSYMC CT 
+           SET CT.SZBSYMC_ENROLLED = 'N', 
+               CT.SZBSYMC_ACTIVITYDATE = systimestamp 
          WHERE NOT EXISTS (SELECT 'Y' FROM SATURN.SZVSTCR C 
                            WHERE C.SZVSTCR_PIDM = CT.SZBSYMC_PIDM 
                             and C.SZVSTCR_TERM_CODE = CT.SZBSYMC_TERM 
@@ -1065,15 +1077,49 @@ BEGIN
                             -- Adding this section to remove Regional College and LAB courses from the integration
                              -- Tickets 2011193 and 2013893
                              -- G Mclellan Nov 13, 2024
-                             AND ((Select MAX(S.SSBSECT_INSM_CODE) from SATURN.SSBSECT S
-                                   WHERE S.SSBSECT_TERM_CODE = CT.SZBSYMC_TERM
-                                     AND S.SSBSECT_CRN = substr(CT.SZBSYMC_UNIQCRSEID,instr(CT.SZBSYMC_UNIQCRSEID,'_',1,2)+1)) != 'RC'
                              AND (Select MAX(S.SSBSECT_SCHD_CODE) from SATURN.SSBSECT S
                                   WHERE S.SSBSECT_TERM_CODE = CT.SZBSYMC_TERM
-                                    AND S.SSBSECT_CRN = substr(CT.SZBSYMC_UNIQCRSEID,instr(CT.SZBSYMC_UNIQCRSEID,'_',1,2)+1)) != 'LAB'    )
+                                    AND S.SSBSECT_CRN = substr(CT.SZBSYMC_UNIQCRSEID,instr(CT.SZBSYMC_UNIQCRSEID,'_',1,2)+1)) != 'LAB'    
+                            --- ticket 2869479 Oct 01 2025 >>
+                            AND NOT (
+                                  (SELECT MAX(S.SSBSECT_PTRM_CODE)
+                                     FROM SATURN.SSBSECT S
+                                    WHERE S.SSBSECT_TERM_CODE = CT.SZBSYMC_TERM
+                                      AND S.SSBSECT_CRN       = SUBSTR(CT.SZBSYMC_UNIQCRSEID, INSTR(CT.SZBSYMC_UNIQCRSEID,'_',1,2) + 1)
+                                  ) = 'SC'
+                              AND (SELECT MAX(S.SSBSECT_SEQ_NUMB)
+                                     FROM SATURN.SSBSECT S
+                                    WHERE S.SSBSECT_TERM_CODE = CT.SZBSYMC_TERM
+                                      AND S.SSBSECT_CRN       = SUBSTR(CT.SZBSYMC_UNIQCRSEID, INSTR(CT.SZBSYMC_UNIQCRSEID,'_',1,2) + 1)
+                                  ) LIKE 'R%'
+                            ) 
+                            -- <<
                             -- End addition G Mclellan Nov 13, 2024
                             ) 
          AND CT.SZBSYMC_ENROLLED = 'Y'; 
+         
+        UPDATE SZBSYMC CT
+           SET CT.SZBSYMC_ENROLLED     = 'N',
+               CT.SZBSYMC_ACTIVITYDATE = SYSTIMESTAMP
+         WHERE CT.SZBSYMC_ENROLLED = 'Y'
+           AND NOT EXISTS (
+                 SELECT 1
+                   FROM SATURN.SZVSTCR C
+                   JOIN SATURN.SSBSECT S
+                     ON S.SSBSECT_TERM_CODE = C.SZVSTCR_TERM_CODE
+                    AND S.SSBSECT_CRN       = C.SZVSTCR_CRN
+                  WHERE C.SZVSTCR_PIDM      = CT.SZBSYMC_PIDM
+                    AND C.SZVSTCR_TERM_CODE = CT.SZBSYMC_TERM
+                    AND C.SZVSTCR_CRN       = SUBSTR(
+                                                CT.SZBSYMC_UNIQCRSEID,
+                                                INSTR(CT.SZBSYMC_UNIQCRSEID,'_',1,2) + 1
+                                              )
+                    AND S.SSBSECT_SCHD_CODE <> 'LAB'
+                    --- ticket 2869479 Oct 01 2025 >>
+                    AND NOT ( S.SSBSECT_PTRM_CODE = 'SC' AND S.SSBSECT_SEQ_NUMB LIKE 'R%' )
+               );
+
+
         Commit; 
         -- End mod GM 
     
