@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.writeSymplicityStudentData(loadType in varc
 											to Student file
 											
    1.2		  09-MAY-2023 Nigel Tourney		RFC 561854 - Changed full file to only pull changes since 01-JUL-2022
+   
+   1.3        06-NOV-2025 Nigel Tourney     RFC 562894 - Changed full file to only pull changes since 01-JUL-2024
 											
 ******************************************************************************/
 	
@@ -202,7 +204,7 @@ BEGIN
 					    else SZBSYMS_EXTERNALEMAIL
 				   end as SZBSYMS_EXTERNALEMAIL	--RFC 561753 - NTOURNEY - 21-FEB-2023
             from SZBSYMS
-			where SZBSYMS_ACTIVITYDATE >= to_date('01-JUL-2023') --RFC 561854 NTOURNEY 09-MAY-2023
+			where SZBSYMS_ACTIVITYDATE >= to_date('01-JUL-2024')
         ) loop
 
         --Write student data record to text file.        

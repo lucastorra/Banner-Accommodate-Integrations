@@ -11,6 +11,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityFacultyDataLoad is
    1.0        ??-???-2021 Patrick Lo       	Initial creation
 											
    1.1		  09-MAY-2023 Nigel Tourney		RFC 561854 - Increase minimum academic term from 202100 to 202200
+   
+   1.2        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
 											
 ******************************************************************************/
 
@@ -59,7 +61,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityFacultyDataLoad is
     cursor getAsgnPidm_c is
         
         select distinct sirasgn_pidm
-        from sirasgn where sirasgn_term_code > '202300';
+        from sirasgn where sirasgn_term_code > '202400';
 --        select distinct sirasgn_pidm
 --        from sirasgn where sirasgn_term_code > '202001' --'202000'
 --        and sirasgn_term_code < '202003'; --'202100';      

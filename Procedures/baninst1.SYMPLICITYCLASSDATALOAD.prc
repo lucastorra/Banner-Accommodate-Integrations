@@ -19,7 +19,9 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
    1.3        11-SEP-2025 Nigel Tourney     RFC 562817 - Modified to stop sending duplicate instructors for a course.
                                             Bug fix to instructor email 17, it was always blank.
                                             
-   1.4        01-OUT-2025 Lucas Torra       TICKET 2869479 - Adjust Regional College rule.   
+   1.4        01-OUT-2025 Lucas Torra       TICKET 2869479 - Adjust Regional College rule.
+   
+   1.5        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
 											
 ******************************************************************************/
 
@@ -166,7 +168,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
         on c.GTVDUNT_CODE = b.SSBSECT_DUNT_CODE
         
         where a.szvstcr_pidm = c_stuPidm
-          and a.szvstcr_term_code > '202300'
+          and a.szvstcr_term_code > '202400'
         -- Request from Ashley Boyes Ticket # 2011193 and 2013893 Nov 13 2024 GM 
         -- Removing Regional colleges (RC) and Labs (LAB) from Courses list
           

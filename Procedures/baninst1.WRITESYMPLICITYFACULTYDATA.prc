@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.writeSymplicityFacultyData(loadType in varc
    
    1.2		  31-OCT-2023 Nigel Tourney		RFC 562054 - Revised change from RFC 561854 to pull all faculty records with
 														 a current assignment.
+														 
+   1.3        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
 											
 ******************************************************************************/
     
@@ -59,7 +61,7 @@ BEGIN
 			WHERE EXISTS
            (SELECT 1
               FROM sirasgn
-             WHERE     sirasgn_term_code > '202300'
+             WHERE     sirasgn_term_code > '202400'
                    AND sirasgn_pidm = szbsymf_pidm) --RFC 562054 NTOURNEY 31-OCT-2023
         ) loop
 

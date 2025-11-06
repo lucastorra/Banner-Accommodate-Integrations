@@ -11,6 +11,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.writesymplicityClassData(loadType in varcha
    1.0        ??-???-2021 Patrick Lo       	Initial creation
 											
    1.1		  09-MAY-2023 Nigel Tourney		RFC 561854 - Increase minimum academic term from 202100 to 202200
+   
+   1.2        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
 											
 ******************************************************************************/
     
@@ -75,7 +77,7 @@ BEGIN
                    SZBSYMC_GRADEDATE,
                    SZBSYMC_CREDITHRS
             from SZBSYMC
-			where SZBSYMC_TERM > '202300' --RFC 561854 NTOURNEY 09-MAY-2023
+			where SZBSYMC_TERM > '202400'
             order by SZBSYMC_UNIQCRSEID, 
                    SZBSYMC_ACTIVITYDATE ASC
         ) loop
@@ -181,7 +183,7 @@ BEGIN
                    SZBSYMC_CREDITHRS
             from SZBSYMC
             where SZBSYMC_ACTIVITYDATE > (trunc(sysdate)+20/24) --(sysdate - 0.5)
-			and SZBSYMC_TERM > '202300' --RFC561854 NTOURNEY 09-MAY-2023
+			and SZBSYMC_TERM > '202400'
             order by SZBSYMC_UNIQCRSEID, 
                    SZBSYMC_ACTIVITYDATE ASC
         ) loop

@@ -29,6 +29,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
    1.6        02-SEP-2025 Nigel Tourney     RFC 562809 - Update hard-coded decision code list to match the new
 											codes between CRM/Banner.
 											
+   1.7        06-NOV-2026 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
+											
 ******************************************************************************/
 
     stuPidm         number(8);
@@ -138,7 +140,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
 
         select * 
 		  from INTSERV.SPT_SYMP_SZVAPRD
-		 where szvaprd_term_code_entry > '202300'
+		 where szvaprd_term_code_entry > '202400'
            --and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
 		   and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
            and szvaprd_pidm = c_pidm
@@ -152,7 +154,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
 
         select distinct szvaprd_pidm 
           from SZVAPRD 
-         where szvaprd_term_code_entry > '202300'
+         where szvaprd_term_code_entry > '202400'
           --and szvaprd_pidm in pidm_Parameter  --**********for testing*********
         --and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
 		and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
@@ -254,7 +256,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
 			   SZVESTU_DEPT_CODE,
 			   SZVESTU_MAJR_CODE_CONC_1
         FROM SZVESTU
-        WHERE SZVESTU_ETRM_CODE > '202300' --'202000'
+        WHERE SZVESTU_ETRM_CODE > '202400' --'202000'
         AND SZVESTU_PIDM = C_PIDM
         order by 1 desc; -- Adjusted back to 2022 code. Lucas Torra 2025-08-15
         
@@ -263,7 +265,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
     
     cursor getRegsPidm_c is
 
-        select distinct szvstcr_pidm from saturn.szvstcr where szvstcr_term_code > '202300'
+        select distinct szvstcr_pidm from saturn.szvstcr where szvstcr_term_code > '202400'
         
           --and szvstcr_pidm = pidm_Parameter --**********for testing*********
         order by 1
