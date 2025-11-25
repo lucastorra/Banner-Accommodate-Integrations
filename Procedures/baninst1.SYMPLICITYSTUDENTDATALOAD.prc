@@ -29,7 +29,9 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
    1.6        02-SEP-2025 Nigel Tourney     RFC 562809 - Update hard-coded decision code list to match the new
 											codes between CRM/Banner.
 											
-   1.7        06-NOV-2026 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
+   1.7        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
+   
+   1.8        25-NOV-2025 Nigel Tourney     RFC 562924 - Add more new decision codes that were missed in Sept 2025.
 											
 ******************************************************************************/
 
@@ -142,7 +144,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
 		  from INTSERV.SPT_SYMP_SZVAPRD
 		 where szvaprd_term_code_entry > '202400'
            --and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
-		   and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+		   --and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+		   and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AR','AW','BA','CA','CO','DE','DR','ER','EX','IA','IT','LA','OR','QE','RA','RE','RF','RO','RU','SU','TR','WA','WB','WC','WL','WR','WW')
            and szvaprd_pidm = c_pidm
            --and szvaprd_pidm = pidm_Parameter  --**********for testing********* 
          order by 2,1,3;      
@@ -157,7 +160,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityStudentDataLoad is
          where szvaprd_term_code_entry > '202400'
           --and szvaprd_pidm in pidm_Parameter  --**********for testing*********
         --and szvaprd_apdc_code in ('AA','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
-		and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+		--and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AW','BA','CA','ER','EX','IA','IT','LA','OR','QE','RA','RF','RO','RU','TR','WA','WC','WL')
+        and szvaprd_apdc_code in ('AA','AC','AD','AH','AM','AR','AW','BA','CA','CO','DE','DR','ER','EX','IA','IT','LA','OR','QE','RA','RE','RF','RO','RU','SU','TR','WA','WB','WC','WL','WR','WW')
         order by 1
         ;        
 --        select distinct szvaprd_pidm from SZVAPRD where szvaprd_term_code_entry > '202001' --'202000'
