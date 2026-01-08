@@ -22,6 +22,10 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
    1.4        01-OUT-2025 Lucas Torra       TICKET 2869479 - Adjust Regional College rule.
    
    1.5        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
+   
+   1.6        08-JAN-2026 Nigel Tourney     RFC 3124917 - Include labs with credit hours. We had previously excluded all labs,
+                                            but some labs are stand-alone without a theory section, and these can have exams
+                                            that require accommodations.
 											
 ******************************************************************************/
 
@@ -173,9 +177,10 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
         -- Removing Regional colleges (RC) and Labs (LAB) from Courses list
           
           --and (b.SSBSECT_INSM_CODE != 'RC' AND b.SSBSECT_SCHD_CODE != 'LAB')
-          and (b.SSBSECT_SCHD_CODE != 'LAB')        
-
+          and (b.SSBSECT_SCHD_CODE != 'LAB' or        
         -- End change Nov 13 2024 GM
+        
+           (b.SSBSECT_SCHD_CODE = 'LAB' and nvl(b.SSBSECT_CREDIT_HRS,0) != 0)) --NTOURNEY RFC 3124917 08-JAN-2026
         
         --- ticket 2869479 Oct 01 2025 >>
         --- Remove Regional Colleges
