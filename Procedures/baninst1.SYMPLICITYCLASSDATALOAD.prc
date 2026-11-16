@@ -26,6 +26,8 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
    1.6        08-JAN-2026 Nigel Tourney     RFC 3124917 - Include labs with credit hours. We had previously excluded all labs,
                                             but some labs are stand-alone without a theory section, and these can have exams
                                             that require accommodations.
+                                            
+   1.7        16-NOV-2025 Lucas Torra       Ticket 3875078 - Increase minimum academic term from 202400 to 202500                                            
 											
 ******************************************************************************/
 
@@ -172,7 +174,7 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
         on c.GTVDUNT_CODE = b.SSBSECT_DUNT_CODE
         
         where a.szvstcr_pidm = c_stuPidm
-          and a.szvstcr_term_code > '202400'
+          and a.szvstcr_term_code > '202500'
         -- Request from Ashley Boyes Ticket # 2011193 and 2013893 Nov 13 2024 GM 
         -- Removing Regional colleges (RC) and Labs (LAB) from Courses list
           
@@ -270,11 +272,11 @@ CREATE OR REPLACE PROCEDURE BANINST1.symplicityClassDataLoad is
         
         select szbsyms_pidm, szbsyms_studentID from szbsyms
          where szbsyms_rectype = 'REG'
-           --and szbsyms_pidm in (10242819, 10524058) -- for testing 
+           -- and szbsyms_pidm = 10619422 -- for testing 
         union
         select szbsyms_pidm, szbsyms_studentID from szbsyms
          where szbsyms_rectype = 'APP$REG';
-           --and szbsyms_pidm in (10242819, 10524058); -- for testing
+           -- and szbsyms_pidm = 10619422; -- for testing
 
     
     getStudents_rec     getStudents_c%rowtype;

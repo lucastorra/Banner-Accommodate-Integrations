@@ -16,6 +16,9 @@ CREATE OR REPLACE PROCEDURE BANINST1.writeSymplicityFacultyData(loadType in varc
 														 a current assignment.
 														 
    1.3        06-NOV-2025 Nigel Tourney     RFC 562894 - Increase minimum academic term from 202300 to 202400
+   
+   1.4        16-NOV-2025 Lucas Torra       ticket 3875078 - Increase minimum academic term from 202400 to 202500
+
 											
 ******************************************************************************/
     
@@ -61,7 +64,7 @@ BEGIN
 			WHERE EXISTS
            (SELECT 1
               FROM sirasgn
-             WHERE     sirasgn_term_code > '202400'
+             WHERE     sirasgn_term_code > '202500'
                    AND sirasgn_pidm = szbsymf_pidm) --RFC 562054 NTOURNEY 31-OCT-2023
         ) loop
 

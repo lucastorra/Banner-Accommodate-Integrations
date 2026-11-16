@@ -16,6 +16,9 @@ CREATE OR REPLACE PROCEDURE BANINST1.writeSymplicityStudentData(loadType in varc
    1.2		  09-MAY-2023 Nigel Tourney		RFC 561854 - Changed full file to only pull changes since 01-JUL-2022
    
    1.3        06-NOV-2025 Nigel Tourney     RFC 562894 - Changed full file to only pull changes since 01-JUL-2024
+   
+   1.4        16-NOV-2025 Lucas Torra       ticket 3875078 - Increase minimum academic term from 202400 to 202500
+
 											
 ******************************************************************************/
 	
@@ -204,7 +207,7 @@ BEGIN
 					    else SZBSYMS_EXTERNALEMAIL
 				   end as SZBSYMS_EXTERNALEMAIL	--RFC 561753 - NTOURNEY - 21-FEB-2023
             from SZBSYMS
-			where SZBSYMS_ACTIVITYDATE >= to_date('01-JUL-2024')
+			where SZBSYMS_ACTIVITYDATE >= to_date('01-JUL-2025')
         ) loop
 
         --Write student data record to text file.        
